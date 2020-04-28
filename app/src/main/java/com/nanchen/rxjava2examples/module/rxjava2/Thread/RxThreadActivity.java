@@ -1,6 +1,7 @@
 package com.nanchen.rxjava2examples.module.rxjava2.Thread;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.nanchen.rxjava2examples.module.rxjava2.operators.item.RxOperatorBaseActivity;
 
@@ -54,5 +55,38 @@ public class RxThreadActivity extends RxOperatorBaseActivity {
                         Log.e(TAG, "After observeOn(io)，Current thread is " + Thread.currentThread().getName());
                     }
                 });
+
+//        Observable.create(new ObservableOnSubscribe<Integer>() {
+//            @Override
+//            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
+//                Log.e(TAG, "Observable thread is :" + Thread.currentThread().getName() + "\n");
+//                Log.e(TAG, "Observable emit 1" + "\n");
+//                e.onNext(1);
+//            }
+//        }).subscribeOn(Schedulers.newThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .doOnNext(new Consumer<Integer>() {
+//                    @Override
+//                    public void accept(Integer integer) throws Exception {
+//                        Log.e(TAG, "current thread is :" + Thread.currentThread().getName() + "\n");
+//                        Log.e(TAG,"value:" + integer);
+//                    }
+//                })
+//                .observeOn(Schedulers.io())
+//                .doOnNext(new Consumer<Integer>() {
+//                    @Override
+//                    public void accept(Integer integer) throws Exception {
+//                        Log.e(TAG, "current thread22 is :" + Thread.currentThread().getName() + "\n");
+//                        Log.e(TAG,"value22:" + integer);
+//                    }
+//                })
+//                .subscribe(new Consumer<Integer>() {
+//            @Override
+//            public void accept(Integer integer) throws Exception {
+//                Log.e(TAG, "Observer thread is :" + Thread.currentThread().getName() + "\n");
+//                Log.e(TAG, "onNext : value : " + integer);
+////                Toast.makeText(RxThreadActivity.this, "onNext : value : " + integer, Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 }

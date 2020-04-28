@@ -7,6 +7,13 @@ import com.nanchen.rxjava2examples.model.FoodList;
 import com.nanchen.rxjava2examples.module.rxjava2.operators.item.RxOperatorBaseActivity;
 import com.rx2androidnetworking.Rx2AndroidNetworking;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
@@ -44,48 +51,105 @@ public class RxCaseFlatMapActivity extends RxOperatorBaseActivity {
      */
     @Override
     protected void doSomething() {
-        Rx2AndroidNetworking.get("http://www.tngou.net/api/food/list")
-                .addQueryParameter("rows", 1 + "")
-                .build()
-                .getObjectObservable(FoodList.class) // 发起获取食品列表的请求，并解析到FootList
-                .subscribeOn(Schedulers.io())        // 在io线程进行网络请求
-                .observeOn(AndroidSchedulers.mainThread()) // 在主线程处理获取食品列表的请求结果
-                .doOnNext(new Consumer<FoodList>() {
-                    @Override
-                    public void accept(@NonNull FoodList foodList) throws Exception {
-                        // 先根据获取食品列表的响应结果做一些操作
-                        Log.e(TAG, "accept: doOnNext :" + foodList.toString());
-                        mRxOperatorsText.append("accept: doOnNext :" + foodList.toString()+"\n");
-                    }
-                })
-                .observeOn(Schedulers.io()) // 回到 io 线程去处理获取食品详情的请求
-                .flatMap(new Function<FoodList, ObservableSource<FoodDetail>>() {
-                    @Override
-                    public ObservableSource<FoodDetail> apply(@NonNull FoodList foodList) throws Exception {
-                        if (foodList != null && foodList.getTngou() != null && foodList.getTngou().size() > 0) {
-                            return Rx2AndroidNetworking.post("http://www.tngou.net/api/food/show")
-                                    .addBodyParameter("id", foodList.getTngou().get(0).getId() + "")
-                                    .build()
-                                    .getObjectObservable(FoodDetail.class);
-                        }
-                        return null;
+//        Rx2AndroidNetworking.get("http://www.tngou.net/api/food/list")
+//                .addQueryParameter("rows", 1 + "")
+//                .build()
+//                .getObjectObservable(FoodList.class) // 发起获取食品列表的请求，并解析到FootList
+//                .subscribeOn(Schedulers.io())        // 在io线程进行网络请求
+//                .observeOn(AndroidSchedulers.mainThread()) // 在主线程处理获取食品列表的请求结果
+//                .doOnNext(new Consumer<FoodList>() {
+//                    @Override
+//                    public void accept(@NonNull FoodList foodList) throws Exception {
+//                        // 先根据获取食品列表的响应结果做一些操作
+//                        Log.e(TAG, "accept: doOnNext :" + foodList.toString());
+//                        mRxOperatorsText.append("accept: doOnNext :" + foodList.toString()+"\n");
+//                    }
+//                })
+//                .observeOn(Schedulers.io()) // 回到 io 线程去处理获取食品详情的请求
+//                .flatMap(new Function<FoodList, ObservableSource<FoodDetail>>() {
+//                    @Override
+//                    public ObservableSource<FoodDetail> apply(@NonNull FoodList foodList) throws Exception {
+//                        if (foodList != null && foodList.getTngou() != null && foodList.getTngou().size() > 0) {
+//                            return Rx2AndroidNetworking.post("http://www.tngou.net/api/food/show")
+//                                    .addBodyParameter("id", foodList.getTngou().get(0).getId() + "")
+//                                    .build()
+//                                    .getObjectObservable(FoodDetail.class);
+//                        }
+//                        return null;
+//
+//                    }
+//                })
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<FoodDetail>() {
+//                    @Override
+//                    public void accept(@NonNull FoodDetail foodDetail) throws Exception {
+//                        Log.e(TAG, "accept: success ：" + foodDetail.toString());
+//                        mRxOperatorsText.append("accept: success ：" + foodDetail.toString()+"\n");
+//                    }
+//                }, new Consumer<Throwable>() {
+//                    @Override
+//                    public void accept(@NonNull Throwable throwable) throws Exception {
+//                        Log.e(TAG, "accept: error :" + throwable.getMessage());
+//                        mRxOperatorsText.append("accept: error :" + throwable.getMessage()+"\n");
+//                    }
+//                });
 
-                    }
-                })
+
+//        Observable.create(new ObservableOnSubscribe<Integer>() {
+//            @Override
+//            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
+//                Log.e(TAG, "Observable 线程:" + Thread.currentThread().getName() + "\n");
+//                Log.e(TAG, "ObservableEmitter：1" +  "\n");
+//                e.onNext(1);
+//                Log.e(TAG, "ObservableEmitter：2" +  "\n");
+//                e.onNext(2);
+//                Log.e(TAG, "ObservableEmitter：3" +  "\n");
+//                e.onNext(3);
+//            }
+//        }).flatMap(new Function<Integer, ObservableSource<String>>() {
+//            @Override
+//            public ObservableSource<String> apply(Integer integer) throws Exception {
+//                List<String> list = new ArrayList<>();
+//                for (int i=0; i<3; i++){
+//                    list.add("I am value：" + integer);
+//                }
+//                return Observable.fromIterable(list).delay(10, TimeUnit.MILLISECONDS);
+//            }
+//        }).subscribeOn(Schedulers.newThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<String>() {
+//            @Override
+//            public void accept(String s) throws Exception {
+//                Log.e(TAG, "Observer：" + s + "\n");
+//            }
+//        });
+
+
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
+                e.onNext(1);
+                e.onNext(2);
+                e.onNext(3);
+            }
+        }).flatMap(new Function<Integer, ObservableSource<String>>() {
+            @Override
+            public ObservableSource<String> apply(@NonNull Integer integer) throws Exception {
+                List<String> list = new ArrayList<>();
+                for (int i = 0; i < 3; i++) {
+                    list.add("I am value " + integer);
+                }
+                int delayTime = (int) (1 + Math.random() * 10);
+                return Observable.fromIterable(list).delay(delayTime, TimeUnit.MILLISECONDS);
+            }
+        }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<FoodDetail>() {
+                .subscribe(new Consumer<String>() {
                     @Override
-                    public void accept(@NonNull FoodDetail foodDetail) throws Exception {
-                        Log.e(TAG, "accept: success ：" + foodDetail.toString());
-                        mRxOperatorsText.append("accept: success ：" + foodDetail.toString()+"\n");
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        Log.e(TAG, "accept: error :" + throwable.getMessage());
-                        mRxOperatorsText.append("accept: error :" + throwable.getMessage()+"\n");
+                    public void accept(@NonNull String s) throws Exception {
+                        Log.e(TAG, "flatMap : accept : " + s + "\n");//因为打印输出时间的原因，这里可能不会打出3个1/2/3，可以打断点测试
+                        mRxOperatorsText.append("flatMap : accept : " + s + "\n");
                     }
                 });
-
     }
 }

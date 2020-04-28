@@ -40,9 +40,14 @@ public class RxCreateActivity extends RxOperatorBaseActivity {
                 mRxOperatorsText.append("Observable emit 2" + "\n");
                 Log.e(TAG, "Observable emit 2" + "\n");
                 e.onNext(2);
+//                mRxOperatorsText.append("Observable emit onError" + "\n");
+//                Log.e(TAG, "Observable emit onError" + "\n");
+//                e.onError(new NullPointerException());
                 mRxOperatorsText.append("Observable emit 3" + "\n");
                 Log.e(TAG, "Observable emit 3" + "\n");
                 e.onNext(3);
+                mRxOperatorsText.append("Observable emit complete" + "\n");
+                Log.e(TAG, "Observable emit complete" + "\n");
                 e.onComplete();
                 mRxOperatorsText.append("Observable emit 4" + "\n");
                 Log.e(TAG, "Observable emit 4" + "\n" );
